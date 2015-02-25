@@ -1,0 +1,1 @@
+scrapy crawl directives -o items.json
