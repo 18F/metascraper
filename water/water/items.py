@@ -15,4 +15,6 @@ class WaterItem(scrapy.Item):
     title2 = scrapy.Field()
     url = scrapy.Field()
     desc = scrapy.Field()
+    key = scrapy.Field()
+    type = scrapy.Field()
     pass
