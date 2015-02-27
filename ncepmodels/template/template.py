@@ -1,5 +1,7 @@
 from jinja2 import Template
 import json
+from datetime import date
+import codecs
 
 
 #
@@ -40,6 +42,14 @@ for (i, record) in enumerate(data):
        print "match"
        record['extras']=item
 
+
+   record['docid']='gov.noaa.ncep:NOMADS'+str(i)
+   record['doctitle']='NOMADS'+str(i)
+   record['date']=date.today().isoformat()
+   record['nomadsurl']="http://nomads.ncep.noaa.gov/"
+   record['nomadsurltitle']="NOAA Operational Model Archive and Distribution System - NOMADS at NCEP"
+
+   print record['date']
    print record 
    #
    # Load the isorecord.xml template from the templates directory
@@ -49,7 +59,7 @@ for (i, record) in enumerate(data):
    output = template.render(**record)
 
    # write the output to a new ISO record in the waf directory
-   outputfile = open('waf/NCDC'+str(i)+'.xml',"w")
+   outputfile = codecs.open('waf/'+record['doctitle']+'.xml',"w","UTF-8")
    outputfile.write(output)
    outputfile.close()
 

@@ -9,48 +9,71 @@ class NCEPSpider(scrapy.Spider):
     allowed_domains = ["nomads.ncep.noaa.gov"]
     start_urls = ["http://nomads.ncep.noaa.gov/"]
 
+
+
     def parse(self,response):
       print "inside parse"
+      # the 9'th table is the one we want, iterate through each row (tr)
       for sel in response.xpath('//table[9]/trbody/tr'):
-       modeldesclink = sel.xpath('td[1]/a/@href').extract()
-       print modeldesclink 
-       if len(modeldesclink) and isinstance(modeldesclink[0], basestring):
+        print "one"
+        yield self.parse_one_row(response,sel,0)
+
+      # there is a missing <tr> tag in one of the tables, pull in the element
+      for sel in response.xpath('//table[9]/trbody/td/..'):
+        print "two"
+        yield self.parse_one_row(response,sel,0)
+        print "three"
+        yield self.parse_one_row(response,sel,5)
+
+    def parse_one_row(self,response,sel,offset):
+      # the description link is in the 1st td inside the a, sometimes there is a font tag around it, do an or
+      tdnum = str(offset+1)
+      modeldesclink = sel.xpath('td['+tdnum+']/a/@href|td['+tdnum+']/font/a/@href').extract()
+      print modeldesclink 
+      # if we have a link - then we have an item. create an element (we want to ignore titles)
+      if len(modeldesclink) and isinstance(modeldesclink[0], basestring):
          item = NcepmodelsItem()
-         item['modeldesclink'] = ''.join(sel.xpath('td[1]/a/@href').extract())
-         item['title']=''.join(sel.xpath('td[1]/a/text()').extract())
-         updatearray = sel.xpath('td[2]/text()').extract()
+         item['modeldesclink'] = ''.join(modeldesclink)
+         item['title']=''.join(sel.xpath('td['+tdnum+']/a/text()|td['+tdnum+']/font/a/text()').extract())
+         tdnum = str(offset+2)
+         updatearray = sel.xpath('td['+tdnum+']/text()').extract()
          if len(updatearray) and isinstance(updatearray[0], basestring):
            item['update'] = updatearray[0].strip()
-         item['grib'] = ''.join(sel.xpath('td[3]/a/@href').extract())
-         item['http'] = ''.join(sel.xpath('td[4]/a/@href').extract())
-         item['opendap'] = ''.join(sel.xpath('td[5]/a/@href').extract())
+         tdnum = str(offset+3)
+         item['grib'] = ''.join(sel.xpath('td['+tdnum+']/a/@href').extract())
+         tdnum = str(offset+4)
+         item['http'] = ''.join(sel.xpath('td['+tdnum+']/a/@href').extract())
+         tdnum = str(offset+5)
+         item['opendap'] = ''.join(sel.xpath('td['+tdnum+']/a/@href').extract())
          print item['modeldesclink'], item['title'], item['grib'], item['http'], item['opendap']
          url = urlparse.urljoin(response.url, item['modeldesclink'])
          print url
-         request = scrapy.Request(url,callback=self.parse_desc,meta={'item': item})
-         yield request
+         request = scrapy.Request(url,callback=self.parse_desc,meta={'item': item},dont_filter=True)
+         return request
+
 
     def parse_desc(self,response):
        print "parse_page"
        item = response.meta['item']
        item['modeldesc']  = ''.join(response.xpath("string(//table[7]/tbody/tr/td[1])").extract())
-       print item['modeldesc']
-       request = None
+       #print item['modeldesc']
+       request = item
        if item['opendap'] and isinstance(item['opendap'], basestring):
          opendapurl = urlparse.urljoin("http://nomads.ncep.noaa.gov/", item['opendap'])
-         print opendapurl
-         request = scrapy.Request(opendapurl,callback=self.parse_opendap,meta={'item': item})
+         print "AJS",opendapurl
+         request = scrapy.Request(opendapurl,callback=self.parse_opendap,meta={'item': item},dont_filter=True)
        yield request
 
     def parse_opendap(self,response):
-       print "parse_opendap"
+       print "parse_opendap1"
        request = None
        item = response.meta['item']
-       nexturla = response.xpath("//a[6]/@href").extract()
+       #nexturla = response.xpath("//a[6]/@href").extract()
+       nexturla = response.xpath("//a[.='dir']/@href").extract()
        if len(nexturla) and isinstance(nexturla[0], basestring):
          nexturl= urlparse.urljoin(response.url, nexturla[0])
-         print nexturl
-         request = scrapy.Request(nexturl,callback=self.parse_opendap2,meta={'item': item})
+         print "AJS1",nexturl,"|",response.url
+         request = scrapy.Request(nexturl,callback=self.parse_opendap2,meta={'item': item},dont_filter=True)
        yield request
 
     def parse_opendap2(self,response):
@@ -58,11 +81,12 @@ class NCEPSpider(scrapy.Spider):
        request = None
        item = response.meta['item']
        #nexturla = response.xpath("//a[6]/@href").extract()
-       nexturla = response.xpath("//a[contains(., 'info')]/@href").extract()
+       nexturla = response.xpath("//a[.='info']/@href").extract()
+       print "AJS2",nexturla
        if len(nexturla) and isinstance(nexturla[0], basestring):
          nexturl= urlparse.urljoin(response.url, nexturla[0])
-         print nexturl
-         request = scrapy.Request(nexturl,callback=self.parse_opendap3,meta={'item': item})
+         print "AJS2b",nexturl
+         request = scrapy.Request(nexturl,callback=self.parse_opendap3,meta={'item': item},dont_filter=True)
        yield request
 
     def parse_opendap3(self,response):

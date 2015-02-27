@@ -1,0 +1,8 @@
++find vertical extent and put it in ISO template
++put an if for opendap and remove the resource:
+   {% if opendap is defined %}
+      --- template goes here --
+   {% endif %}
+
++what do we do about things we don't have a lat/lon box for? put them in extras.json ?
+
