@@ -16,16 +16,16 @@ class NCEPSpider(scrapy.Spider):
        print modeldesclink 
        if len(modeldesclink) and isinstance(modeldesclink[0], basestring):
          item = NcepmodelsItem()
-         item['modeldesclink'] = sel.xpath('td[1]/a/@href').extract()
-         item['title'] = sel.xpath('td[1]/a/text()').extract()
+         item['modeldesclink'] = ''.join(sel.xpath('td[1]/a/@href').extract())
+         item['title']=''.join(sel.xpath('td[1]/a/text()').extract())
          updatearray = sel.xpath('td[2]/text()').extract()
          if len(updatearray) and isinstance(updatearray[0], basestring):
            item['update'] = updatearray[0].strip()
-         item['grib'] = sel.xpath('td[3]/a/@href').extract()
-         item['http'] = sel.xpath('td[4]/a/@href').extract()
-         item['opendap'] = sel.xpath('td[5]/a/@href').extract()
+         item['grib'] = ''.join(sel.xpath('td[3]/a/@href').extract())
+         item['http'] = ''.join(sel.xpath('td[4]/a/@href').extract())
+         item['opendap'] = ''.join(sel.xpath('td[5]/a/@href').extract())
          print item['modeldesclink'], item['title'], item['grib'], item['http'], item['opendap']
-         url = urlparse.urljoin(response.url, modeldesclink[0])
+         url = urlparse.urljoin(response.url, item['modeldesclink'])
          print url
          request = scrapy.Request(url,callback=self.parse_desc,meta={'item': item})
          yield request
@@ -33,11 +33,11 @@ class NCEPSpider(scrapy.Spider):
     def parse_desc(self,response):
        print "parse_page"
        item = response.meta['item']
-       item['modeldesc']  = response.xpath("string(//table[7]/tbody/tr/td[1])").extract()
+       item['modeldesc']  = ''.join(response.xpath("string(//table[7]/tbody/tr/td[1])").extract())
        print item['modeldesc']
        request = None
-       if len(item['opendap']) and isinstance(item['opendap'][0], basestring):
-         opendapurl = urlparse.urljoin("http://nomads.ncep.noaa.gov/", item['opendap'][0])
+       if item['opendap'] and isinstance(item['opendap'], basestring):
+         opendapurl = urlparse.urljoin("http://nomads.ncep.noaa.gov/", item['opendap'])
          print opendapurl
          request = scrapy.Request(opendapurl,callback=self.parse_opendap,meta={'item': item})
        yield request

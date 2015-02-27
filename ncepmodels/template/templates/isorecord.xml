@@ -1,0 +1,6 @@
+title {{ title }}!
+http {{ http}}!
+lonresolution {{ lonresolution }}!
+{% if extras is defined %}
+thumbnail {{ extras.thumbnail }}!
+{% endif %}
