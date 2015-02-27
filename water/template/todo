@@ -1,0 +1,8 @@
++ need to fix the template - it looks like NCEP models still, and doesn't create the links from the proper place in the new
+template variable tree
+
++ need to create lat/lon box
+
++ need to create proper ISO times for each of the products
+
+

@@ -17,4 +17,5 @@ class WaterItem(scrapy.Item):
     desc = scrapy.Field()
     key = scrapy.Field()
     type = scrapy.Field()
+    urlkey = scrapy.Field()
     pass

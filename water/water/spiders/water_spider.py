@@ -34,6 +34,11 @@ class WaterSpider(scrapy.Spider):
                print keypart.group(1),"|",keypart.group(2)
                item['type']=keypart.group(1)
                item['key']=keypart.group(2)
+            # download.php?data=tgz_fcst_f072
+            urlkey = re.match('.*data=..._(.*)',item['url'])
+            if urlkey:
+               print urlkey.group(1)
+               item['urlkey']=urlkey.group(1)
 
             yield item
 
