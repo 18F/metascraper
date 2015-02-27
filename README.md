@@ -7,3 +7,8 @@ There is also a template program that read the output json and creates metadata 
 http://jinja.pocoo.org/docs/dev/templates/
 
 This is a work in progress.
+
+
+install pieces:
+pip install Jinja2
+pip install Scrapy
