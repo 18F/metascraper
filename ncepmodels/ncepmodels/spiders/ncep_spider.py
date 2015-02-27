@@ -92,6 +92,7 @@ class NCEPSpider(scrapy.Spider):
     def parse_opendap3(self,response):
        print "parse_opendap3"
        item = response.meta['item']
+       altitudestring = response.xpath("normalize-space(//tr[td/b[contains(.,'Altitude:')]]/td[position()>1])").extract()
        lonstring = response.xpath("normalize-space(//tr[td/b[contains(.,'Longitude:')]]/td[position()>1])").extract()
        latstring = response.xpath("normalize-space(//tr[td/b[contains(.,'Latitude:')]]/td[position()>1])").extract()
        latresolution = response.xpath("normalize-space(//tr[td/b[contains(.,'Latitude:')]]/td[position()>2])").extract()
@@ -106,6 +107,10 @@ class NCEPSpider(scrapy.Spider):
        item['maxlat']=latarray.group(2)
        item['minlon']=lonarray.group(1)
        item['maxlon']=lonarray.group(2)
+       altitude = re.match('(.*).. to (.*)..',altitudestring[0])
+       if altitude is not None:
+         item['maxalt']=altitude.group(1)
+         item['minalt']=altitude.group(2)
        # resolution
        # [u'\xa0(707 points, avg. res. 0.046\xb0)'] [u'\xa0(1407 points, avg. res. 0.049\xb0)']
        latr = re.match('.*res. *(.*).\)',latresolution[0])

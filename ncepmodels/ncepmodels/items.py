@@ -24,4 +24,6 @@ class NcepmodelsItem(scrapy.Item):
     maxlat = scrapy.Field()
     latresolution= scrapy.Field()
     lonresolution= scrapy.Field()
+    maxalt = scrapy.Field()
+    minalt = scrapy.Field()
     pass
