@@ -49,6 +49,14 @@ for (i, record) in enumerate(data):
    record['nomadsurl']="http://nomads.ncep.noaa.gov/"
    record['nomadsurltitle']="NOAA Operational Model Archive and Distribution System - NOMADS at NCEP"
 
+   if not 'minlat' in record:
+     print "AJS"
+     record['minlat'] = "-90"
+     record['maxlat'] = "90"
+     record['minlon'] = "0"
+     record['maxlon'] = "359.5"
+     record['resolution'] = "maybe 1 degree"
+
    print record['date']
    print record 
    #

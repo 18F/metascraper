@@ -951,6 +951,7 @@
                     </gmd:distributorTransferOptions>
                 </gmd:MD_Distributor>
             </gmd:distributor>			
+            {% if opendap|default("") != ""  %}
                <gmd:distributor>
                 <gmd:MD_Distributor>
                     <gmd:distributorContact>
@@ -1044,6 +1045,7 @@
                     </gmd:distributorTransferOptions>
                 </gmd:MD_Distributor>
             </gmd:distributor>
+        {% endif %}
         </gmd:MD_Distribution>
     </gmd:distributionInfo>
   	<gmd:metadataMaintenance>

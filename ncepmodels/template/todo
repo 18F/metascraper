@@ -1,8 +1,19 @@
 +find vertical extent and put it in ISO template
-+put an if for opendap and remove the resource:
-   {% if opendap is defined %}
-      --- template goes here --
-   {% endif %}
+maxalt / minalt
+
+https://geo-ide.noaa.gov/wiki/index.php?title=ISO_Extents#XML_Example_-_Vertical_Extent
+<gmd:verticalElement>
+ <gmd:EX_VerticalExtent>
+  <gmd:minimumValue>
+   <gco:Real> 3600 </gco:Real>
+  </gmd:minimumValue>
+  <gmd:maximumValue>
+   <gco:Real> 3100 </gco:Real>
+  </gmd:maximumValue>
+  <gmd:verticalCRS xlink:href="http://www.epsg-registry.org/export.htm?gml=urn:ogc:def:crs:EPSG::5715" xlink:title="msl depth in meters" xlink:actuate="onRequest"/>
+ </gmd:EX_VerticalExtent>
+</gmd:verticalElement>
 
 +what do we do about things we don't have a lat/lon box for? put them in extras.json ?
+   -- right now we default it to global, hacky hack
 
