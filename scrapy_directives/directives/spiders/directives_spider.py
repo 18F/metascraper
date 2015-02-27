@@ -26,8 +26,10 @@ class  DirectivesSpider(scrapy.Spider):
       
          url = urlparse.urljoin(response.url, pagelink[0])
          print url
-         yield scrapy.Request(url,callback=self.parse_page)
+         yield scrapy.Request(url,callback=self.parse_page,meta={'item': item})
 
    def parse_page(self,response):
        pagelink = response.xpath('td[1]/a/@href').extract()
+       item = response.meta['item']
        print "parse_page"
+       return item

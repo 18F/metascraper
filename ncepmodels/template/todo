@@ -1,3 +1,4 @@
+
 +find vertical extent and put it in ISO template
 maxalt / minalt
 
@@ -16,4 +17,6 @@ https://geo-ide.noaa.gov/wiki/index.php?title=ISO_Extents#XML_Example_-_Vertical
 
 +what do we do about things we don't have a lat/lon box for? put them in extras.json ?
    -- right now we default it to global, hacky hack
+
++ Is Frequency of update correct?  Set to daily now, probably should be different
 

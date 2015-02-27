@@ -55,7 +55,10 @@ class NCEPSpider(scrapy.Spider):
     def parse_desc(self,response):
        print "parse_page"
        item = response.meta['item']
+       # this one leaves the first line that we don't want:
        item['modeldesc']  = ''.join(response.xpath("string(//table[7]/tbody/tr/td[1])").extract())
+       # this one doesn't do anything good with the html
+       #item['modeldesc']  = ''.join(response.xpath("//table[7]/tbody/tr/td[1]/p/text()").extract())
        #print item['modeldesc']
        request = item
        if item['opendap'] and isinstance(item['opendap'], basestring):
